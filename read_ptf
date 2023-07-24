@@ -1,0 +1,30 @@
+program read_ptf;
+
+uses
+  SysUtils;
+
+const
+  thefile = 'xxxxx.txt';
+
+var
+  myfile : textfile ;
+  s : string ;
+
+begin
+  writeln('Reading the contents of file: ', C_FNAME);
+  writeln('=========================================');
+
+  AssignFile(myfile , thefile);
+
+  try
+    reset(myfile);
+
+    while not eof(myfile) do
+    begin
+      readln(myfile, text);
+    end;
+
+    CloseFile(myfile);
+
+end;
+     
