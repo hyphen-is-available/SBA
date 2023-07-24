@@ -113,6 +113,12 @@ begin
    for i := 0 to high(A) do
    begin
         len := Length(A[i]);
+        setLength(A[i] , len);
+        if (Ord(A[i][1]) >= 97) and (Ord(A[i][1]) <= 122) then
+        begin
+          A[i][1] := Chr(Ord(A[i][1]) - 32);
+        end;
+
         if A[i][len] = '.' then
         begin
           A[i] := Copy(A[i] , 1 , len - 1);
@@ -228,8 +234,11 @@ var
 begin
   writeln('Enter you writing here :');
   readln(writing);
+  writeln();
+
   writeln('What is your tone of writing ? Formal or Informal ?');
   readln(tone);
+  writeln();
 
   n_syllables := CountSyllables(writing);
 
@@ -241,11 +250,12 @@ begin
 
   avg_w := n_words / n_sentences ;
   writeln('AVERAGE LENGTH OF SENTENCES : ' , avg_w:0:2 , ' WORDS');
+  writeln();
 
   avg_s := n_syllables / n_words ;
   readability := 206.835 - 1.015*avg_w - 84.6*avg_s ;
-  writeln('Readability (Flesch-Kincaid readability tests) : ' , readability:0:2 , '/100') ;
-
+  writeln('Readability (Flesch-Kincaid Readability Tests) : ' , readability:0:2 , '/100') ;
+  writeln();
 
   text := WordExtraction(writing);
   words := WordExist(text);
@@ -258,8 +268,4 @@ begin
 
   readln();
 
-end.
-
-
-
- 
+end.        
