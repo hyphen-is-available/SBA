@@ -1,4 +1,4 @@
-program SBA;
+program SBA ;
 
 uses
   {$IFDEF UNIX}
@@ -227,8 +227,8 @@ end;
 var
    text , words : TStringArray ;
    FC , Top3 : DynamicArray ;
-   writing , tone , word : string ;
-   i, n_words , n_sentences , n_syllables: integer ;
+   writing , mode , tone , word : string ;
+   n_words , n_sentences , n_syllables: integer ;
    avg_w , avg_s , readability : real;
 
 begin
@@ -236,35 +236,51 @@ begin
   readln(writing);
   writeln();
 
-  writeln('What is your tone of writing ? Formal or Informal ?');
-  readln(tone);
-  writeln();
+  writeln('Which function are you trying to use ? Statistics or Reminders ?');
+  readln(mode);
 
-  n_syllables := CountSyllables(writing);
+  if mode = 'Statistics' then
+  begin
+    writeln();
 
-  n_words := CountWords(writing);
-  writeln('NUMBER OF WORDS : ' , n_words );
+    n_syllables := CountSyllables(writing);
 
-  n_sentences := CountSentences(writing);
-  writeln('NUMBER OF SENTENCES : ' , n_sentences );
+    n_words := CountWords(writing);
+    writeln('NUMBER OF WORDS : ' , n_words );
 
-  avg_w := n_words / n_sentences ;
-  writeln('AVERAGE LENGTH OF SENTENCES : ' , avg_w:0:2 , ' WORDS');
-  writeln();
+    n_sentences := CountSentences(writing);
+    writeln('NUMBER OF SENTENCES : ' , n_sentences );
 
-  avg_s := n_syllables / n_words ;
-  readability := 206.835 - 1.015*avg_w - 84.6*avg_s ;
-  writeln('Readability (Flesch-Kincaid Readability Tests) : ' , readability:0:2 , '/100') ;
-  writeln();
+    avg_w := n_words / n_sentences ;
+    writeln('AVERAGE LENGTH OF SENTENCES : ' , avg_w:0:2 , ' WORDS');
+    writeln();
 
-  text := WordExtraction(writing);
-  words := WordExist(text);
-  FC := WordFrequency(text , words);
-  Top3 := LargestIndex(FC);
-  writeln('TOP3 FREQUENTLY USED WORDS :');
-  writeln('1) ' , words[Top3[0]] , ' ' , FC[Top3[0]]);
-  writeln('2) ' , words[Top3[1]] , ' ' , FC[Top3[1]]);
-  writeln('3) ' , words[Top3[2]] , ' ' , FC[Top3[2]]);
+    avg_s := n_syllables / n_words ;
+    readability := 206.835 - 1.015*avg_w - 84.6*avg_s ;
+    writeln('Readability (Flesch-Kincaid Readability Tests) : ' , readability:0:2 , '/100') ;
+    writeln();
+
+    text := WordExtraction(writing);
+    words := WordExist(text);
+    FC := WordFrequency(text , words);
+    Top3 := LargestIndex(FC);
+    writeln('TOP3 FREQUENTLY USED WORDS :');
+    writeln('1) ' , words[Top3[0]] , ' ' , FC[Top3[0]]);
+    writeln('2) ' , words[Top3[1]] , ' ' , FC[Top3[1]]);
+    writeln('3) ' , words[Top3[2]] , ' ' , FC[Top3[2]]);
+
+    readln();
+
+  end
+  else if mode = 'Reminders' then
+  begin
+    writeln();
+    writeln('What is your tone of writing ? Formal or Informal ?');
+    readln(tone);
+
+  end;
+
+end.
 
   readln();
 
