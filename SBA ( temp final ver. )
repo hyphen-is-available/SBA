@@ -1,4 +1,4 @@
-program SBA_Statistics ;
+program SBA ;
 
 uses
   {$IFDEF UNIX}
@@ -134,7 +134,7 @@ var
    mark : TStringArray;
 
 begin
-   mark := ['.',',','!','?','''','"','(',')',':'];
+   mark := ['.',',','!','?','''','"','(',')',':',';'];
    A := writing.split(' ');
 
    for i := 0 to high(A) do
@@ -273,13 +273,36 @@ begin
 end;
 
 
+function Spelling(text: TStringArray): DynamicArray ;
+var
+   Dictionary : TStringArray ;
+   SpellingMistakes : DynamicArray;
+   i , len , numWords : integer;
+   word : string;
+
+begin
+   Dictionary := ['and','And','now','Now','here','Here','is','Is','my','My','secret','Secret','a','A','very','Very','simple','Simple','it','It','only','Only','with','With','the','The','heart','Heart','that','That','one','One','can','Can','see','See','rightly','Rightly','what','What','essential','Essential','invisible','Invisible','to','To','eye','Eye'];
+   len := Length(text);
+   SetLength(SpellingMistakes , 0);
+   for i := 0 to len do
+   begin
+       if not ElementInArray(text[i] , dictionary) then
+       begin
+         SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
+         SpellingMistakes[Length(SpellingMistakes)-1] := i;
+       end;
+   end;
+
+   Spelling := SpellingMistakes;
+end;
+
 
 
 var
    org_text , text , words : TStringArray ;
-   FC , Top3 , Informal: DynamicArray ;
+   FC , Top3 , Informal , Misspelled : DynamicArray ;
    writing , mode , tone , word : string ;
-   i , j , n_words , n_sentences , n_syllables: integer ;
+   i , j , k , n_words , n_sentences , n_syllables: integer ;
    avg_w , avg_s , readability : real;
 
 begin
@@ -335,27 +358,56 @@ begin
     readln(tone);
     writeln();
 
+    Misspelled := Spelling(text);
 
     if tone = 'Formal' then
     begin
       Informal := Formal(text);
       j := 0;
+      k := 0;
+
       for i := 0 to Length(org_text) do
       begin
            if i = Informal[j] then
            begin
-                write('$$' , org_text[Informal[j]] ,'$$ ');
-                j := j + 1;
+             write('$$' , org_text[Informal[j]] ,'$$ ');
+             j := j + 1;
            end
-           else if i <> Informal[j] then
+
+           else if i = Misspelled[k] then
+           begin
+             write('##' , org_text[Misspelled[k]] , '## ');
+             k := k + 1;
+           end
+
+           else if (i <> Informal[j]) and (i <> Misspelled[k]) then
            begin
                 write(org_text[i] , ' ');
            end;
+      end;
+    end
+
+    else if tone = 'Informal' then
+    begin
+      k := 0;
+
+      for i := 0 to Length(org_text) do
+      begin
+          if i = Misspelled[k] then
+          begin
+            write('##' , org_text[Misspelled[k]] , '## ');
+            k := k + 1;
+          end
+
+          else if (i <> Misspelled[k]) then
+          begin
+            write(org_text[i] , ' ');
+          end;
       end;
     end;
 
 
   end;
-  readln();
 
-end.
+  readln();
+end. 
