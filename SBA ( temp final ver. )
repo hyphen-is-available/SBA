@@ -260,7 +260,7 @@ begin
    InformalWords := ['will','can','wanna','gonna','gotta','kinda','sorta','dunno','cuz','lemme','gimme','crappy','dude','yikes','fella','hey','cool','awesome','chill','freaking','bro','crazy','super','yup','yep','btw','idk','thx','omg','yo','yeah','Will','Can','Wanna','Gonna','Gotta','Kinda','Sorta','Dunno','Cuz','Lemme','Gimme','Crappy','Dude','Fella','Hey','Cool','Awesome','Chill','Freaking','Bro','Crazy','Super','Yup','Yep','OMG','BTW','IDK','Thx','Yo','Yeah'];
    len := Length(text);
    SetLength(Informal,0);
-   for i := 0 to len do
+   for i := 0 to len - 1 do
    begin
        if ElementInArray(text[i],InformalWords) or CharacterInWord('''' , text[i]) then
        begin
@@ -281,10 +281,10 @@ var
    word : string;
 
 begin
-   Dictionary := ['good','Good','morning','Morning','I','am','Am','Daniel','Wong','from','From','Hong','Kong','study','Study','information','Information','and','And','communications','Communications','technology','Technology','with','With','Kitou','Isaac','Issac','they','They','are','Are','good','Good'];
+   Dictionary := ['good','Good','morning','Morning','I','am','Am','Daniel','Wong','from','From','Hong','Kong','study','Study','information','Information','and','And','communications','Communications','technology','Technology','with','With','Kitou','Isaac','Issac','they','They','are','Are','good','Good','however','However','still','Still','smartest','Smartest','among','Among','them','Them','the','The'];
    len := Length(text);
    SetLength(SpellingMistakes , 0);
-   for i := 0 to len do
+   for i := 0 to len - 1 do
    begin
        if not ElementInArray(text[i] , dictionary) then
        begin
@@ -366,49 +366,109 @@ begin
       j := 0;
       k := 0;
 
-      for i := 0 to Length(org_text) do
+      if (Length(Informal) > 0) and (Length(Misspelled) > 0) then
       begin
-           if i = Informal[j] then
-           begin
-             write('$$' , org_text[Informal[j]] ,'$$ ');
-             j := j + 1;
-           end
+         for i := 0 to Length(org_text) do
+         begin
+              if i = Informal[j] then
+              begin
+                   write('$$' , org_text[Informal[j]] ,'$$ ');
+                   j := j + 1;
+              end
 
-           else if i = Misspelled[k] then
-           begin
-             write('##' , org_text[Misspelled[k]] , '## ');
-             k := k + 1;
-           end
+              else if i = Misspelled[k] then
+              begin
+                   write('##' , org_text[Misspelled[k]] , '## ');
+                   k := k + 1;
+              end
 
-           else if (i <> Informal[j]) and (i <> Misspelled[k]) then
-           begin
-                write(org_text[i] , ' ');
-           end;
+              else if (i <> Informal[j]) and (i <> Misspelled[k]) then
+              begin
+                   write(org_text[i] , ' ');
+              end;
+         end;
+      end
+
+      else if (Length(Informal) = 0) and (Length(Misspelled) > 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            if i = Misspelled[k] then
+            begin
+              write('##' , org_text[Misspelled[k]] , '## ');
+              k := k + 1;
+            end
+
+            else if i <> Misspelled[k] then
+            begin
+              write(org_text[i]);
+            end;
+        end;
+      end
+
+      else if (Length(Informal) > 0) and (Length(Misspelled) = 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            if i = Informal[j] then
+            begin
+              write('$$' , org_text[Informal[j]] , '$$ ');
+              j := j + 1;
+            end
+
+            else if i <> Informal[j] then
+            begin
+              write(org_text[i]);
+            end;
+        end;
+      end
+
+      else if (Length(Informal) = 0) and (Length(Misspelled) = 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            write(org_text[i] , ' ');
+        end;
       end;
+
     end
 
     else if tone = 'Informal' then
     begin
       k := 0;
 
-      for i := 0 to Length(org_text) do
+      if Length(Misspelled) > 0 then
       begin
-          if i = Misspelled[k] then
-          begin
-            write('##' , org_text[Misspelled[k]] , '## ');
-            k := k + 1;
-          end
+           for i := 0 to Length(org_text) do
+           begin
+                if i = Misspelled[k] then
+                begin
+                     write('##' , org_text[Misspelled[k]] , '## ');
+                     k := k + 1;
+                end
 
-          else if (i <> Misspelled[k]) then
-          begin
+                else if (i <> Misspelled[k]) then
+                begin
+                     write(org_text[i] , ' ');
+                end;
+           end;
+      end
+
+      else if Length(Misspelled) = 0 then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
             write(org_text[i] , ' ');
-          end;
+        end;
+
+        writeln('No Spelling Mistakes Detected ! Great Job !');
       end;
+
     end;
 
+  readln();
   end;
 
-  readln();
 end.
 
-{Good morning. I am Daniel Wong from Hong Kong. I study Information and Communications Technology with Kitou and Isaac. They are good good.} 
+{Good morning. I am Daniel Wong from Hong Kong. I study Information and Communications Technology with Kitou and Isaac. They are good good. However, I am still the smartest among them.}
