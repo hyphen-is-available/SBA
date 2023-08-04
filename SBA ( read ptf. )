@@ -21,7 +21,7 @@ begin
 
     while not eof(myfile) do
     begin
-      readln(myfile, text);
+      readln(myfile, s);
     end;
 
     CloseFile(myfile);
