@@ -401,9 +401,12 @@ begin
 
             else if i <> Misspelled[k] then
             begin
-              write(org_text[i]);
+              write(org_text[i] , ' ');
             end;
         end;
+        writeln();
+        writeln();
+        writeln('No Writing Tone Mistakes Detected! Great Job!');
       end
 
       else if (Length(Informal) > 0) and (Length(Misspelled) = 0) then
@@ -418,9 +421,12 @@ begin
 
             else if i <> Informal[j] then
             begin
-              write(org_text[i]);
+              write(org_text[i] , ' ');
             end;
         end;
+        writeln();
+        writeln();
+        writeln('No Spelling Mistakes Detected! Great Job!');
       end
 
       else if (Length(Informal) = 0) and (Length(Misspelled) = 0) then
@@ -429,6 +435,9 @@ begin
         begin
             write(org_text[i] , ' ');
         end;
+        writeln();
+        writeln();
+        writeln('No Spelling Mistakes nor Writing Tone Mistakes Detected! Excellent Job!');
       end;
 
     end
@@ -461,6 +470,8 @@ begin
             write(org_text[i] , ' ');
         end;
 
+        writeln();
+        writeln();
         writeln('No Spelling Mistakes Detected ! Great Job !');
       end;
 
