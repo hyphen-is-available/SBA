@@ -15,7 +15,7 @@ type
 function ElementInArray(element: string ; A: TStringArray): Boolean;
 
   var
-     i , j : integer;
+     i : integer;
      return : boolean;
 
   begin
@@ -34,16 +34,15 @@ function ElementInArray(element: string ; A: TStringArray): Boolean;
   end;
 
 
-function CharacterInWord(Character: char ; word: String): Boolean;
+function CharacterInWord(Character: char ; word: string): Boolean;
 var
-   i, len : integer;
+   i : integer;
    flag : boolean;
 
 begin
    flag := false;
-   len := length(word);
-   i := 1;
-   while (i <= len) and (flag = false) do
+   i := 0;
+   while (i <= Length(word)) and (not flag) do
    begin
         if Character = word[i] then
         begin
@@ -79,7 +78,7 @@ begin
           end;
         end
         else
-         lastvowel := false;
+            lastvowel := false;
     end;
     CountSyllables := Syllables ;
 end;
@@ -104,19 +103,22 @@ begin
 end;
 
 
-function CountSentences(writing: string): integer;
+function CountSentences(writing: TStringArray ; n_words: integer): integer;
 var
-   end_mark : TStringArray ;
-   sentences ,len ,i : integer;
+   end_mark : String ;
+   sentences ,i ,len : integer;
+   last_char : char ;
 
 begin
    sentences := 0;
-   end_mark := ['.','?','!'];
-   len := Length(writing);
+   end_mark := '.!?';
+   len := 0;
 
-   for i := 0 to len do
+   for i := 0 to n_words - 1 do
    begin
-        if ElementInArray(writing[i] , end_mark) then
+        len := Length(writing[i]);
+        last_char := writing[i][len];
+        if CharacterInWord(last_char , end_mark) then
         begin
           sentences := sentences + 1;
         end;
@@ -324,8 +326,10 @@ begin
     n_words := CountWords(writing);
     writeln('NUMBER OF WORDS : ' , n_words );
 
-    n_sentences := CountSentences(writing);
+    n_sentences := CountSentences(org_text, n_words);
     writeln('NUMBER OF SENTENCES : ' , n_sentences );
+
+    writeln('NUMBER OF SYLLABLES : ' , n_syllables );
 
     avg_w := n_words / n_sentences ;
     writeln('AVERAGE LENGTH OF SENTENCES : ' , avg_w:0:2 , ' WORDS');
@@ -477,8 +481,9 @@ begin
 
     end;
 
-  readln();
+
   end;
+  readln();
 
 end.
 
