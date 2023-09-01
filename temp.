@@ -1,0 +1,500 @@
+program SBA ;
+
+uses
+  {$IFDEF UNIX}
+  cthreads,
+  {$ENDIF}
+  Classes,
+  { you can add units after this }
+  SysUtils ;
+
+type
+  DynamicArray = array of integer;
+
+
+function ElementInArray(element: string ; A: TStringArray): Boolean;
+
+  var
+     i : integer;
+     return : boolean;
+
+  begin
+     i := 0;
+     return := false;
+     while (i <= High(A)) and (not return) do
+     begin
+          if element = A[i] then
+          begin
+            return := true;
+          end;
+          i := i + 1;
+     end;
+
+     ElementInArray := return;
+  end;
+
+
+function CharacterInWord(Character: char ; word: string): Boolean;
+var
+   i : integer;
+   flag : boolean;
+
+begin
+   flag := false;
+   i := 0;
+   while (i <= Length(word)) and (not flag) do
+   begin
+        if Character = word[i] then
+        begin
+          flag := true
+        end;
+        i := i + 1;
+   end;
+
+   CharacterInWord := flag;
+end;
+
+
+function CountSyllables(writing: string): integer;
+var
+   i, len, Syllables: integer;
+   vowels: TStringArray;
+   lastvowel: boolean;
+
+begin
+   vowels := ['a','e','i','o','u','y','A','E','I','O','U','Y'];
+   len := Length(writing);
+   Syllables := 0;
+   lastvowel := false;
+
+   for i := 0 to len-1 do
+   begin
+        if ElementInArray(writing[i], vowels) then
+        begin
+          if lastvowel = false then
+          begin
+            Syllables := Syllables + 1;
+            lastvowel := true;
+          end;
+        end
+        else
+            lastvowel := false;
+    end;
+    CountSyllables := Syllables ;
+end;
+
+
+function CountWords(writing: TStringArray): integer;
+var
+   word: string;
+   words: integer;
+
+begin
+   words := 0;
+
+   for word in writing do
+   begin
+        words := words + 1;
+   end;
+
+   CountWords := words;
+end;
+
+
+function CountSentences(writing: TStringArray ; n_words: integer): integer;
+var
+   end_mark : String ;
+   sentences ,i ,len : integer;
+   last_char : char ;
+
+begin
+   sentences := 0;
+   end_mark := '.!?';
+   len := 0;
+
+   for i := 0 to n_words - 1 do
+   begin
+        len := Length(writing[i]);
+        last_char := writing[i][len];
+        if CharacterInWord(last_char , end_mark) then
+        begin
+          sentences := sentences + 1;
+        end;
+   end;
+
+   CountSentences := sentences;
+end;
+
+
+function WordExtraction(writing: String): TStringArray;
+var
+   i, len : integer;
+   mark, temp : TStringArray;
+
+begin
+   temp := writing.split(' ');
+   mark := ['.',',','!','?','''','"','(',')',':',';','/'];
+
+   for i := 0 to high(temp) do
+   begin
+        len := High(temp[i]);
+        setLength(temp[i] , len);
+        if (Ord(temp[i][1]) >= 97) and (Ord(temp[i][1]) <= 122) then
+        begin
+          temp[i][1] := Chr(Ord(temp[i][1]) - 32);
+        end;
+
+        if ElementInArray(temp[i][len] , mark) then
+        begin
+          temp[i] := Copy(temp[i] , 1 , len - 1);
+        end;
+   end;
+
+   WordExtraction := temp;
+end;
+
+
+function WordExist(A: TStringArray): TStringArray;
+var
+   B: TStringArray;
+   i: integer;
+
+begin
+   SetLength(B,0);
+   for i := 0 to high(A) do
+   begin
+       if not ElementInArray(A[i] , B) then
+       begin
+         SetLength(B, Length(B)+1);
+         B[Length(B)-1] := A[i];
+       end;
+   end;
+
+   WordExist := B;
+end;
+
+
+function WordFrequency(text , words : TStringArray): DynamicArray;
+var
+   FC : DynamicArray ;
+   word: string;
+   i, j, len : integer;
+
+begin
+   SetLength(FC,high(words)+1);
+   for i := 0 to high(words) do
+   begin
+       for j := 0 to high(text) do
+       begin
+           if words[i] = text[j] then
+           begin
+             FC[i] :=  FC[i] + 1 ;
+           end;
+       end;
+   end;
+
+   WordFrequency := FC;
+end;
+
+
+function LargestIndex(A: DynamicArray): DynamicArray ;
+
+var
+   FC : DynamicArray ;
+   i, temp, index1, index2, index3: integer;
+
+begin
+   index1 := 0;
+   index2 := 1;
+   index3 := 2;
+
+   if A[index3] > A[index2] then
+   begin
+     temp := index2;
+     index2 := index3;
+     index3 := temp;
+   end;
+   if A[index2] > A[index1] then
+   begin
+     temp := index1;
+     index1 := index2;
+     index2 := temp;
+   end;
+
+   for i := 3 to High(A) do
+   begin
+       if A[i] > A[index1] then
+       begin
+         index3 := index2;
+         index2 := index1;
+         index1 := i;
+       end
+       else if A[i] > A[index2] then
+       begin
+         index3 := index2;
+         index2 := i;
+       end
+       else if A[i] > A[index3] then
+       begin
+         index3 := i;
+       end;
+   end;
+
+   SetLength(FC , 3);
+   FC[0] := index1;
+   FC[1] := index2;
+   FC[2] := index3;
+
+   LargestIndex := FC;
+end;
+
+
+function Ascending_WF(A: DynamicArray): DynamicArray ;
+
+var
+   B: DynamicArray;
+   i: integer;
+
+begin
+   SetLength(B,length(A));
+   for i := 0 to high(A) do
+       B[i] := i ;
+
+end;
+
+function Formal(text: TStringArray): DynamicArray ;
+var
+   Informal : DynamicArray;
+   InformalWords : TStringArray ;
+   i , len : integer;
+
+begin
+   InformalWords := ['will','can','wanna','gonna','gotta','kinda','sorta','dunno','cuz','lemme','gimme','crappy','dude','yikes','fella','hey','cool','awesome','chill','freaking','bro','crazy','super','yup','yep','btw','idk','thx','omg','yo','yeah','Will','Can','Wanna','Gonna','Gotta','Kinda','Sorta','Dunno','Cuz','Lemme','Gimme','Crappy','Dude','Fella','Hey','Cool','Awesome','Chill','Freaking','Bro','Crazy','Super','Yup','Yep','OMG','BTW','IDK','Thx','Yo','Yeah'];
+   len := Length(text);
+   SetLength(Informal,0);
+   for i := 0 to len - 1 do
+   begin
+       if ElementInArray(text[i],InformalWords) or CharacterInWord('''' , text[i]) then
+       begin
+         SetLength(Informal,Length(Informal)+1);
+         Informal[Length(Informal)-1] := i;
+       end;
+   end;
+
+   Formal := Informal ;
+end;
+
+
+function Spelling(text: TStringArray): DynamicArray ;
+var
+   Dictionary : TStringArray ;
+   SpellingMistakes : DynamicArray;
+   i , len , numWords : integer;
+   word : string;
+
+begin
+   Dictionary := ['good','Good','morning','Morning','I','am','Am','Daniel','Wong','from','From','Hong','Kong','study','Study','information','Information','and','And','communications','Communications','technology','Technology','with','With','Kitou','Isaac','Issac','they','They','are','Are','good','Good','however','However','still','Still','smartest','Smartest','among','Among','them','Them','the','The'];
+   len := Length(text);
+   SetLength(SpellingMistakes , 0);
+   for i := 0 to len - 1 do
+   begin
+       if not ElementInArray(text[i] , dictionary) then
+       begin
+         SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
+         SpellingMistakes[Length(SpellingMistakes)-1] := i;
+       end;
+   end;
+
+   Spelling := SpellingMistakes;
+end;
+
+
+
+var
+   org_text , text , words : TStringArray ;
+   FC , Top3 , Informal , Misspelled : DynamicArray ;
+   writing , mode , tone , word : string ;
+   i , j , k , n_words , n_sentences , n_syllables: integer ;
+   avg_w , avg_s , readability : real;
+
+begin
+  writeln('Enter you writing here :');
+  readln(writing);
+  writeln();
+
+  writeln('Which function are you trying to use ? Statistics or Reminders ?');
+  readln(mode);
+  writeln();
+
+  org_text := writing.Split(' ');
+  text := WordExtraction(writing);
+
+  if mode = 'Statistics' then
+  begin
+    n_syllables := CountSyllables(writing);
+
+    n_words := CountWords(org_text);
+    writeln('NUMBER OF WORDS : ' , n_words );
+
+    n_sentences := CountSentences(org_text, n_words);
+    writeln('NUMBER OF SENTENCES : ' , n_sentences );
+
+    writeln('NUMBER OF SYLLABLES : ' , n_syllables );  {to be deleted}
+
+    avg_w := n_words / n_sentences ;
+    writeln('AVERAGE LENGTH OF SENTENCES : ' , avg_w:0:2 , ' WORDS');
+    writeln();
+
+    avg_s := n_syllables / n_words ;
+    readability := 206.835 - 1.015*avg_w - 84.6*avg_s ;
+    writeln('Readability (Flesch-Kincaid Readability Tests) : ' , readability:0:2 , '/100') ;
+    writeln();
+
+    words := WordExist(text);
+    FC := WordFrequency(text , words);
+    Top3 := LargestIndex(FC);
+    writeln('TOP3 FREQUENTLY USED WORDS :');
+    writeln('1) ' , words[Top3[0]] , ' ' , FC[Top3[0]]);
+    writeln('2) ' , words[Top3[1]] , ' ' , FC[Top3[1]]);
+    writeln('3) ' , words[Top3[2]] , ' ' , FC[Top3[2]]);
+
+  end
+
+  else if mode = 'Reminders' then
+  begin
+    writeln('Please be awared that :');
+    writeln('1) "##word##" means this word may has spelling mistakes ');
+    writeln('2) "@@word@@" means this word may has grammar mistakes ');
+    writeln('3) "$$word$$" means this word may has writing tone mistakes');
+    writeln();
+
+    writeln('What is your tone of writing ? Formal or Informal ?');
+    readln(tone);
+    writeln();
+
+    Misspelled := Spelling(text);
+
+    if tone = 'Formal' then
+    begin
+      Informal := Formal(text);
+      j := 0;
+      k := 0;
+
+      if (Length(Informal) > 0) and (Length(Misspelled) > 0) then
+      begin
+         for i := 0 to Length(org_text) do
+         begin
+              if i = Informal[j] then
+              begin
+                   write('$$' , org_text[Informal[j]] ,'$$ ');
+                   j := j + 1;
+              end
+
+              else if i = Misspelled[k] then
+              begin
+                   write('##' , org_text[Misspelled[k]] , '## ');
+                   k := k + 1;
+              end
+
+              else if (i <> Informal[j]) and (i <> Misspelled[k]) then
+              begin
+                   write(org_text[i] , ' ');
+              end;
+         end;
+      end
+
+      else if (Length(Informal) = 0) and (Length(Misspelled) > 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            if i = Misspelled[k] then
+            begin
+              write('##' , org_text[Misspelled[k]] , '## ');
+              k := k + 1;
+            end
+
+            else if i <> Misspelled[k] then
+            begin
+              write(org_text[i] , ' ');
+            end;
+        end;
+        writeln();
+        writeln();
+        writeln('No Writing Tone Mistakes Detected! Great Job!');
+      end
+
+      else if (Length(Informal) > 0) and (Length(Misspelled) = 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            if i = Informal[j] then
+            begin
+              write('$$' , org_text[Informal[j]] , '$$ ');
+              j := j + 1;
+            end
+
+            else if i <> Informal[j] then
+            begin
+              write(org_text[i] , ' ');
+            end;
+        end;
+        writeln();
+        writeln();
+        writeln('No Spelling Mistakes Detected! Great Job!');
+      end
+
+      else if (Length(Informal) = 0) and (Length(Misspelled) = 0) then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            write(org_text[i] , ' ');
+        end;
+        writeln();
+        writeln();
+        writeln('No Spelling Mistakes nor Writing Tone Mistakes Detected! Excellent Job!');
+      end;
+
+    end
+
+    else if tone = 'Informal' then
+    begin
+      k := 0;
+
+      if Length(Misspelled) > 0 then
+      begin
+           for i := 0 to Length(org_text) do
+           begin
+                if i = Misspelled[k] then
+                begin
+                     write('##' , org_text[Misspelled[k]] , '## ');
+                     k := k + 1;
+                end
+
+                else if (i <> Misspelled[k]) then
+                begin
+                     write(org_text[i] , ' ');
+                end;
+           end;
+      end
+
+      else if Length(Misspelled) = 0 then
+      begin
+        for i := 0 to Length(org_text) do
+        begin
+            write(org_text[i] , ' ');
+        end;
+
+        writeln();
+        writeln();
+        writeln('No Spelling Mistakes Detected ! Great Job !');
+      end;
+
+    end;
+
+
+  end;
+  readln();
+
+end.
+
+{Good morning. I am Daniel Wong from Hong Kong. I study Information and Communications Technology with Kitou and Isaac. They are good good. However, I am still the smartest among them.}
