@@ -291,19 +291,17 @@ begin
 end;
 
 
-function Spelling(text: TStringArray): DynamicArray ;
+function Spelling(text: TStringArray ; Dictionary : Array of String): DynamicArray ;
 var
-   Dictionary : TStringArray ;
    SpellingMistakes : DynamicArray;
    i , len : integer;
 
 begin
-   Dictionary := ['good','Good','morning','Morning','I','am','Am','Daniel','Wong','from','From','Hong','Kong','study','Study','information','Information','and','And','communications','Communications','technology','Technology','with','With','Kitou','Isaac','Issac','hope','Hope','we','We','can','Can','could','Could','get','Get','five','Five','star','Star','together','Together'];
    len := Length(text);
    SetLength(SpellingMistakes , 0);
    for i := 0 to len - 1 do
    begin
-       if not ElementInArray(text[i] , dictionary) then
+       if not ElementInArray(text[i] , Dictionary) then
        begin
          SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
          SpellingMistakes[Length(SpellingMistakes)-1] := i;
@@ -313,13 +311,17 @@ begin
    Spelling := SpellingMistakes;
 end;
 
-
+const
+  W_FNAME = 'XXX.txt'; // to be changed
+  D_FNAME = 'Texting.txt';
 
 var
    org_text , text , words , org_compare : TStringArray ;
+   Dictionary : Array of String;
    FC , Top3 , Informal , Misspelled : DynamicArray ;
    writing , mode , tone : string ;
    compare : string ;
+   writing_file , dictionary_file : TextFile;
    i , j , k , n_words , n_sentences , n_syllables , n_commas : integer ;
    n_cwords , n_csentences , n_csyllables : integer ;
    avg_w , avg_s , avg_c , readability , grade : real;
@@ -329,6 +331,12 @@ var
 begin
   writeln('Enter you writing here :');
   readln(writing);
+
+  {
+  AssginFile(writing_file , W_NAME );
+  Reset(writing_file);
+  } // to be changed
+
   writeln();
 
   writeln('Which function are you trying to use ? Statistics or Reminders ?');
@@ -474,7 +482,21 @@ begin
     readln(tone);
     writeln();
 
-    Misspelled := Spelling(text);
+    AssignFile(dictionary_file , D_FNAME);
+    Reset(dictionary_file);
+
+    i := 0;
+    while not Eof(dictionary_file) do
+    begin
+         ReadLn(tfIn, s);
+         SetLength(dictionary, i + 1);
+         dictionary[i] := s;
+         i := i + 1;
+    end;
+    CloseFile(dictionary_file);
+
+
+    Misspelled := Spelling(text , dictionary);
 
     if tone = 'Formal' then
     begin
@@ -597,7 +619,4 @@ begin
   end;
   readln();
 
-end.
-
-{Test Passage: }
-{Good morning. I am Daniel Wong from Hong Kong. I study Information and Communications Technology with Kitou and Isaac. Hope we could get five star star together.}
+end. 
