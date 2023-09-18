@@ -12,7 +12,7 @@ type
   DynamicArray = array of integer;
 
 
-function ElementInArray(element: string ; A: TStringArray): Boolean;
+function ElementInArray(const element: string ; const A: TStringArray): Boolean;
 
   var
      i : integer;
@@ -34,7 +34,7 @@ function ElementInArray(element: string ; A: TStringArray): Boolean;
   end;
 
 
-function CharacterInWord(Character: char ; word: string): Boolean;
+function CharacterInWord(const Character: char ; word: string): Boolean;
 var
    i : integer;
    flag : boolean;
@@ -54,7 +54,7 @@ begin
 end;
 
 
-function CountSyllables(writing: string): integer;
+function CountSyllables(const writing: string): integer;
 var
    i, len, Syllables: integer;
    vowels: TStringArray;
@@ -83,7 +83,7 @@ begin
 end;
 
 
-function CountWords(writing: TStringArray): integer;
+function CountWords(const writing: TStringArray): integer;
 var
    word: string;
    words: integer;
@@ -100,7 +100,7 @@ begin
 end;
 
 
-function CountSentences(writing: TStringArray ; n_words: integer): integer;
+function CountSentences(const writing: TStringArray ; const n_words: integer): integer;
 var
    end_mark : String ;
    sentences ,i ,len : integer;
@@ -113,7 +113,7 @@ begin
 
    for i := 0 to n_words - 1 do
    begin
-        len := Length(writing[i]);
+        len := High(writing[i]);
         last_char := writing[i][len];
         if CharacterInWord(last_char , end_mark) then
         begin
@@ -125,7 +125,7 @@ begin
 end;
 
 
-function CountCommas(writing: TStringArray ; n_words: integer): integer;
+function CountCommas(const writing: TStringArray ; const n_words: integer): integer;
 
 var
    i , n_comma , len, char: integer ;
@@ -146,7 +146,7 @@ begin
 end;
 
 
-function WordExtraction(writing: string): TStringArray;
+function WordExtraction(const writing: String): TStringArray;
 var
    i, len : integer;
    mark , temp: TStringArray;
@@ -174,7 +174,7 @@ begin
 end;
 
 
-function WordExist(A: TStringArray): TStringArray;
+function WordExist(const A: TStringArray): TStringArray;
 var
    B: TStringArray;
    i: integer;
@@ -194,7 +194,7 @@ begin
 end;
 
 
-function WordFrequency(text , words : TStringArray): DynamicArray;
+function WordFrequency(const text , words : TStringArray): DynamicArray;
 var
    FC : DynamicArray ;
    i, j : integer;
@@ -216,7 +216,7 @@ begin
 end;
 
 
-function LargestIndex(A: DynamicArray): DynamicArray ;
+function LargestIndex(const A: DynamicArray): DynamicArray ;
 
 var
    FC : DynamicArray ;
@@ -268,7 +268,7 @@ begin
 end;
 
 
-function Formal(text: TStringArray): DynamicArray ;
+function Formal(const text: TStringArray): DynamicArray ;
 var
    Informal : DynamicArray;
    InformalWords : TStringArray ;
@@ -292,7 +292,7 @@ begin
 end;
 
 
-function Spelling(text: TStringArray ; Dictionary : TStringArray): DynamicArray ;
+function Spelling(const text: TStringArray ; const Dictionary : TStringArray): DynamicArray ;
 var
    SpellingMistakes : DynamicArray;
    i , len : integer;
@@ -334,7 +334,13 @@ begin
 
   AssignFile(writing_file , W_FNAME);
   Reset(writing_file);
-  Readln(writing_file, writing);
+  writing := '';
+
+  while not eof(writing_file) do
+  begin
+       Readln(writing_file, s);
+       writing := writing + s;
+  end;
   CloseFile(writing_file);
 
   writeln();
@@ -620,4 +626,4 @@ begin
   end;
   readln();
 
-end.                                                                                   
+end.
