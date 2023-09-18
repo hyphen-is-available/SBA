@@ -295,18 +295,41 @@ end;
 function Spelling(const text: TStringArray ; const Dictionary : TStringArray): DynamicArray ;
 var
    SpellingMistakes : DynamicArray;
-   i , len : integer;
+   i , len , left , mid , right : integer;
+   flag : Boolean;
 
 begin
    len := Length(text);
    SetLength(SpellingMistakes , 0);
    for i := 0 to len - 1 do
    begin
-       if not ElementInArray(text[i] , Dictionary) then
+       left := 0;
+       right := length(Dictionary);
+       mid := (left+right) div 2;
+       flag := False;
+
+       while (flag = False) and (left <= right) do
        begin
-         SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
-         SpellingMistakes[Length(SpellingMistakes)-1] := i;
+            if text[i] = Dictionary[mid] then
+            begin
+                 flag := True;
+            end
+            else if text[i] > Dictionary[mid] then
+            begin
+                 left := mid + 1;
+            end
+            else
+            begin
+                 right := mid - 1;
+            end;
        end;
+
+       if flag = False then
+       begin
+          SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
+          SpellingMistakes[Length(SpellingMistakes)-1] := i;
+       end;
+
    end;
 
    Spelling := SpellingMistakes;
@@ -626,4 +649,4 @@ begin
   end;
   readln();
 
-end.
+end. 
