@@ -6,13 +6,13 @@ uses
   {$ENDIF}
   Classes,
   { you can add units after this }
-  SysUtils ;
+  SysUtils, Unit1 ;
 
 type
   DynamicArray = array of integer;
 
 
-function ElementInArray(element: string ; A: TStringArray): Boolean;
+function ElementInArray(const element: string ; const A: TStringArray): Boolean;
 
   var
      i : integer;
@@ -34,7 +34,7 @@ function ElementInArray(element: string ; A: TStringArray): Boolean;
   end;
 
 
-function CharacterInWord(Character: char ; word: string): Boolean;
+function CharacterInWord(const Character: char ; word: string): Boolean;
 var
    i : integer;
    flag : boolean;
@@ -54,7 +54,7 @@ begin
 end;
 
 
-function CountSyllables(writing: string): integer;
+function CountSyllables(const writing: string): integer;
 var
    i, len, Syllables: integer;
    vowels: TStringArray;
@@ -83,7 +83,7 @@ begin
 end;
 
 
-function CountWords(writing: TStringArray): integer;
+function CountWords(const writing: TStringArray): integer;
 var
    word: string;
    words: integer;
@@ -100,7 +100,7 @@ begin
 end;
 
 
-function CountSentences(writing: TStringArray ; n_words: integer): integer;
+function CountSentences(const writing: TStringArray ; const n_words: integer): integer;
 var
    end_mark : String ;
    sentences ,i ,len : integer;
@@ -113,7 +113,7 @@ begin
 
    for i := 0 to n_words - 1 do
    begin
-        len := Length(writing[i]);
+        len := High(writing[i]);
         last_char := writing[i][len];
         if CharacterInWord(last_char , end_mark) then
         begin
@@ -125,7 +125,7 @@ begin
 end;
 
 
-function CountCommas(writing: TStringArray ; n_words: integer): integer;
+function CountCommas(const writing: TStringArray ; const n_words: integer): integer;
 
 var
    i , n_comma , len, char: integer ;
@@ -146,7 +146,7 @@ begin
 end;
 
 
-function WordExtraction(writing: string): TStringArray;
+function WordExtraction(const writing: String): TStringArray;
 var
    i, len : integer;
    mark , temp: TStringArray;
@@ -174,7 +174,7 @@ begin
 end;
 
 
-function WordExist(A: TStringArray): TStringArray;
+function WordExist(const A: TStringArray): TStringArray;
 var
    B: TStringArray;
    i: integer;
@@ -194,7 +194,7 @@ begin
 end;
 
 
-function WordFrequency(text , words : TStringArray): DynamicArray;
+function WordFrequency(const text , words : TStringArray): DynamicArray;
 var
    FC : DynamicArray ;
    i, j : integer;
@@ -216,7 +216,7 @@ begin
 end;
 
 
-function LargestIndex(A: DynamicArray): DynamicArray ;
+function LargestIndex(const A: DynamicArray): DynamicArray ;
 
 var
    FC : DynamicArray ;
@@ -268,7 +268,38 @@ begin
 end;
 
 
-function Formal(text: TStringArray): DynamicArray ;
+function BinarySearch(const A: string; const B: TStringArray): Boolean ;
+var
+   left , mid , right : integer;
+   flag : Boolean;
+
+begin
+   left := 0;
+   right := high(B);
+   flag := False;
+
+   while (flag = False) and (left <= right) do
+   begin
+        mid := (left + right) div 2;
+       if A = B[mid] then
+       begin
+         flag := True
+       end
+       else if A < B[mid] then
+       begin
+         right := mid - 1;
+       end
+       else
+       begin
+           left := mid + 1;
+       end;
+   end;
+
+   BinarySearch := flag;
+end;
+
+
+function Formal(const text: TStringArray): DynamicArray ;
 var
    Informal : DynamicArray;
    InformalWords : TStringArray ;
@@ -292,20 +323,24 @@ begin
 end;
 
 
-function Spelling(text: TStringArray ; Dictionary : TStringArray): DynamicArray ;
+function Spelling(const text: TStringArray; const Dictionary : TStringArray): DynamicArray ;
 var
    SpellingMistakes : DynamicArray;
-   i , len : integer;
+   temp1 , temp2 : TStringArray;
+   i , j , len , len2 : integer;
 
 begin
-   len := Length(text);
+   temp2 := Dictionary;
+   len := High(text);
    SetLength(SpellingMistakes , 0);
-   for i := 0 to len - 1 do
+
+   for i := 0 to len do
    begin
-       if not ElementInArray(text[i] , Dictionary) then
+       if not BinarySearch(text[i] , temp2) then
        begin
-         SetLength(SpellingMistakes , Length(SpellingMistakes) + 1);
-         SpellingMistakes[Length(SpellingMistakes)-1] := i;
+            len2 := Length(SpellingMistakes);
+            SetLength(SpellingMistakes , len2 + 1);
+            SpellingMistakes[len2] := i;
        end;
    end;
 
@@ -318,7 +353,7 @@ const
 
 var
    org_text , text , words , org_compare : TStringArray ;
-   Dictionary , Passage: TStringArray;
+   dictionary , Passage , temp1 , temp2 : TStringArray;
    FC , Top3 , Informal , Misspelled : DynamicArray ;
    writing , mode , tone , s: string ;
    compare : string ;
@@ -332,13 +367,21 @@ var
 begin
   writeln('======= Reading your Passage Text File =======');
 
-  AssignFile(writing_file , W_FNAME);
+  AssignFile(writing_file , W_FNAME);     {line 360}
   Reset(writing_file);
-  Readln(writing_file, writing);
+  writing := '';
+
+  while not eof(writing_file) do
+  begin
+       Readln(writing_file, s);
+       writing := writing + s;
+  end;
   CloseFile(writing_file);
 
   writeln();
-
+  writeln('Your Writing is :');
+  writeln(writing);
+  writeln();
 
   writeln('Which function are you trying to use ? Statistics or Reminders ?');
   readln(mode);
@@ -485,19 +528,18 @@ begin
 
     AssignFile(dictionary_file , D_FNAME);
     Reset(dictionary_file);
-
     i := 0;
-    while not Eof(dictionary_file) do
+    while not eof(dictionary_file) do
     begin
-         ReadLn(dictionary_file, s);
-         SetLength(dictionary, i + 1);
-         dictionary[i] := s;
+         readln(dictionary_file, s);
          i := i + 1;
+         SetLength(dictionary, i);
+         dictionary[i-1] := s;
     end;
     CloseFile(dictionary_file);
 
 
-    Misspelled := Spelling(text , dictionary);
+    Misspelled := Spelling(text,dictionary);
 
     if tone = 'Formal' then
     begin
@@ -615,6 +657,8 @@ begin
       end;
 
     end;
+
+
 
 
   end;
