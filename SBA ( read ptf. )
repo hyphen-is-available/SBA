@@ -4,27 +4,30 @@ uses
   SysUtils;
 
 const
-  thefile = 'xxxxx.txt';
+  W_FNAME = 'TingTingPig.txt'; { the name of your text file }
 
 var
-  myfile : textfile ;
-  s : string ;
+   writing_file : textFile;
+   writing, s : string;
 
 begin
-  writeln('Reading the contents of file: ', C_FNAME);
-  writeln('=========================================');
+     AssignFile(writing_file , W_FNAME);
+     Reset(writing_file);
+     writing := '';
 
-  AssignFile(myfile , thefile);
+     while not eof(writing_file) do
+     begin
+       Readln(writing_file, s);
+       writing := writing + s;
+     end;
+     CloseFile(writing_file);
+     writeln();
+     { Reading the text file }
 
-  try
-    reset(myfile);
-
-    while not eof(myfile) do
-    begin
-      readln(myfile, s);
-    end;
-
-    CloseFile(myfile);
-
-end;
+     writeln('Your Writing is :');
+     writeln(writing);
+     writeln();
+     { Returning the Original Passage }
+end.
+{ read the text file as string } 
      
