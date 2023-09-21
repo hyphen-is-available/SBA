@@ -1,37 +1,31 @@
 program SBA ;
 
 uses
-  {$IFDEF UNIX}
-  cthreads,
-  {$ENDIF}
-  Classes,
-  { you can add units after this }
-  SysUtils, Unit1 ;
+    Classes, SysUtils;
 
 type
   DynamicArray = array of integer;
 
-
 function ElementInArray(const element: string ; const A: TStringArray): Boolean;
 
-  var
-     i : integer;
-     return : boolean;
+var
+   i : integer;
+   return : boolean;
 
-  begin
+begin
      i := 0;
      return := false;
      while (i <= High(A)) and (not return) do
      begin
           if element = A[i] then
           begin
-            return := true;
+               return := true;
           end;
           i := i + 1;
      end;
 
      ElementInArray := return;
-  end;
+end;
 
 
 function CharacterInWord(const Character: char ; word: string): Boolean;
@@ -698,4 +692,4 @@ begin
   writeln('Thank you for using EWA! Welcome back anytime!');
   readln();
 
-end.                                                                              
+end.                                                                                                                                           
