@@ -48,6 +48,7 @@ begin
   writeln('Which function are you trying to use ? Statistics or Reminders ?');
   readln(mode);
   writeln();
+  { Asking for which Mode user's are trying to Use }
 
   org_text := writing.Split(' ');
   text := WordExtraction(writing);
@@ -56,8 +57,9 @@ begin
   begin
     n_syllables := CountSyllables(writing);
 
-    n_words := CountWords(org_text);
+    n_words := length(org_text);
     writeln('NUMBER OF WORDS : ' , n_words );
+    writeln(n_syllables);
 
     n_sentences := CountSentences(org_text, n_words);
     writeln('NUMBER OF SENTENCES : ' , n_sentences );
@@ -373,4 +375,4 @@ begin
   writeln('Thank you for using EWA! Welcome back anytime!');
   readln();
 
-end. 
+end.
