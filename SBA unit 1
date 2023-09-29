@@ -11,7 +11,6 @@ type
 
 function ElementInArray(const element: string ; const A: TStringArray): Boolean;
 function CountSyllables(const writing: string): integer;
-function CountWords(const writing: TStringArray): integer;
 function CountCommas(const writing: TStringArray ; const n_words: integer): integer;
 function CountSentences(const writing: TStringArray ; const n_words: integer): integer;
 function WordExtraction(const writing: String): TStringArray;
@@ -54,14 +53,14 @@ var
    lastvowel: boolean;
 
 begin
-   vowels := ['a','e','i','o','u','y','A','E','I','O','U','Y'];
-   len := Length(writing);
+   vowels := ['A','E','I','O','U','Y','a','e','i','o','u','y'];
+   len := High(writing);
    Syllables := 0;
    lastvowel := false;
 
-   for i := 0 to len-1 do
+   for i := 0 to len do
    begin
-        if ElementInArray(writing[i], vowels) then
+        if BinarySearch(writing[i], vowels) then
         begin
           if lastvowel = false then
           begin
@@ -73,23 +72,6 @@ begin
             lastvowel := false;
     end;
     CountSyllables := Syllables ;
-end;
-
-
-function CountWords(const writing: TStringArray): integer;
-var
-   word: string;
-   words: integer;
-
-begin
-   words := 0;
-
-   for word in writing do
-   begin
-        words := words + 1;
-   end;
-
-   CountWords := words;
 end;
 
 
