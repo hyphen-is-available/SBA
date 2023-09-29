@@ -10,13 +10,14 @@ type
 const
   W_FNAME = 'Passage.txt';
   D_FNAME = 'Vocabulary.txt';
+  I_FNAME = 'Informal_Words.txt';
 
 var
-   org_text , text , words , org_compare , dictionary: TStringArray ;
+   org_text , text , words , org_compare , dictionary , informalwords : TStringArray ;
    FC , Top3 , Informal , Misspelled : DynamicArray ;
    writing , mode , tone , s: string ;
    compare : string ;
-   writing_file , dictionary_file : TextFile;
+   writing_file , dictionary_file , informal_file: TextFile;
    i , j , k , n_words , n_sentences , n_syllables , n_commas : integer ;
    n_cwords , n_csentences , n_csyllables , n_ccommas : integer ;
    avg_w , avg_s , avg_c , readability , grade : real;
@@ -236,7 +237,19 @@ begin
     { returning the passage with mistakes mark }
     if tone = 'Formal' then { Both Writing Tone Mistakes and Spelling Mistakes need to be marked }
     begin
-      Informal := Formal(text);
+      AssignFile(informal_file , I_FNAME);
+      Reset(informal_file);
+      i := 0;
+      while not eof(informal_file) do
+      begin
+         readln(informal_file, s);
+         i := i + 1;
+         SetLength(informalwords, i);
+         informalwords[i-1] := s;
+      end;
+      CloseFile(informal_file);
+
+      Informal := Formal(text,informalwords);
       j := 0;
       k := 0;
 
@@ -360,4 +373,4 @@ begin
   writeln('Thank you for using EWA! Welcome back anytime!');
   readln();
 
-end.
+end. 
