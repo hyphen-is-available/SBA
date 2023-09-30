@@ -177,7 +177,7 @@ begin
          org_compare := compare.Split(' ');
 
          n_csyllables := CountSyllables(compare);
-         n_cwords := CountWords(org_compare);
+         n_cwords := Length(org_compare);
          n_csentences := CountSentences(org_compare, n_cwords);
          n_ccommas := CountCommas(org_compare, n_cwords);
          avg_cw := n_cwords / n_csentences ;
