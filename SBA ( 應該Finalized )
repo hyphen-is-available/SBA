@@ -8,9 +8,9 @@ type
 
 
 const
-  W_FNAME = 'Passage.txt';
-  D_FNAME = 'Vocabulary.txt';
-  I_FNAME = 'Informal_Words.txt';
+  W_FNAME = 'Passage.txt'; {Text File from Users}
+  D_FNAME = 'Vocabulary.txt'; {Text File of Dictionary}
+  I_FNAME = 'Informal_Words.txt'; {Text File of List of Informal Words}
 
 var
    org_text , text , words , org_compare , dictionary , informalwords : TStringArray ;
@@ -205,15 +205,13 @@ begin
          { Comparison on the Basic Statistics }
 
     end;
-    writeln();
   end
 
   else if mode = 'Reminders' then { REMINDERS FUNCTION }
   begin
     writeln('Please be awared that :');
     writeln('1) "##word##" means this word may has spelling mistakes ');
-    writeln('2) "@@word@@" means this word may has grammar mistakes ');
-    writeln('3) "$$word$$" means this word may has writing tone mistakes');
+    writeln('2) "$$word$$" means this word may has writing tone mistakes');
     writeln();
 
     writeln('What is your tone of writing ? Formal or Informal ?');
@@ -250,6 +248,7 @@ begin
          informalwords[i-1] := s;
       end;
       CloseFile(informal_file);
+      { Reading the Informal Words File }
 
       Informal := Formal(text,informalwords);
       j := 0;
@@ -372,7 +371,10 @@ begin
     end;
 
   end;
+  writeln();
+  writeln();
   writeln('Thank you for using EWA! Welcome back anytime!');
   readln();
 
-end.
+
+end. 
